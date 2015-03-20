@@ -5,15 +5,15 @@
 
  <object name="iol_scripts"
     meta_type="Filesystem Directory View"
-    directory="gisweb.iol:skins/iol_scripts"/>
+    directory="iol.gisweb.base:skins/iol_scripts"/>
 
  <object name="iol_templates"
     meta_type="Filesystem Directory View"
-    directory="gisweb.iol:skins/iol_templates"/>
+    directory="iol.gisweb.base:skins/iol_templates"/>
 
  <object name="iol_assets"
     meta_type="Filesystem Directory View"
-    directory="gisweb.iol:skins/iol_assets"/>
+    directory="iol.gisweb.base:skins/iol_assets"/>
 
  <skin-path name="*">
   <layer name="iol_scripts"
