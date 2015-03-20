@@ -1,0 +1,146 @@
+<plominodatabase id="iol_base">
+  <design>
+    <element id="base_sub_viewparent" title="Visualizza il documento  genitore" type="PlominoForm">
+      <id type="Products.Archetypes.Field.StringField">base_sub_viewparent</id>
+      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
+      <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
+      <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSaveDocument>
+      <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onDeleteDocument>
+      <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
+      <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
+      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[<p><span class="plominoHidewhenClass">start:hw_nohistory</span></p><p><span class="plominoFieldClass">docHistory</span></p><p><span class="plominoHidewhenClass">end:hw_nohistory</span></p>]]></FormLayout>
+      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
+      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentId>
+      <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
+      <HideDefaultActions type="Products.Archetypes.Field.BooleanField">True</HideDefaultActions>
+      <HideInMenu type="Products.Archetypes.Field.BooleanField">True</HideInMenu>
+      <isSearchForm type="Products.Archetypes.Field.BooleanField">False</isSearchForm>
+      <isPage type="Products.Archetypes.Field.BooleanField">False</isPage>
+      <SearchView type="Products.Archetypes.Field.StringField"/>
+      <SearchFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></SearchFormula>
+      <Position type="Products.Archetypes.Field.IntegerField"/>
+      <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
+      <elements>
+        <element id="linkToParent" title="Pratica di riferimento" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">linkToParent</id>
+          <FieldType type="Products.Archetypes.Field.StringField">DOCLINK</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">renderDocLinkWithForm</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">renderDocLinkWithForm</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <params>
+<param>
+<value><struct>
+<member>
+<name>dynamictableparam</name>
+<value><string>'bPaginate': true,
+'bLengthChange': true,
+'bFilter': true,
+'bSort': true,
+'bInfo': true,
+'bAutoWidth': false</string></value>
+</member>
+<member>
+<name>labelcolumn</name>
+<value><string>dsp_disabili_base</string></value>
+</member>
+</struct></value>
+</param>
+</params>
+          <CustomData>
+            <extensionfields ExportImportClass="Products.CMFPlomino.tests.schemaextender.importexport.ExtendedFieldImportExporter">
+              <field name="fieldDescription"/>
+              <field name="customAttributes"/>
+            </extensionfields>
+          </CustomData>
+        </element>
+        <element id="titolo" title="Titolo del Documento" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">titolo</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">COMPUTED</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[naut = str(plominoDocument.getItem('numero_autorizzazione',''))
+num = str(plominoDocument.getItem('numero_pratica',''))
+try:
+    data = 'del %s' %DateToString(plominoDocument.getItem('data_protocollo',''),'%d/%m/%Y')
+except:
+    data = ''
+return 'Autorizzazione n. %s pratica n. %s %s' %(naut,num,data)]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <CustomData>
+            <extensionfields ExportImportClass="Products.CMFPlomino.tests.schemaextender.importexport.ExtendedFieldImportExporter">
+              <field name="fieldDescription"/>
+              <field name="customAttributes">parentDocument</field>
+            </extensionfields>
+          </CustomData>
+        </element>
+        <element id="docHistory" title="Storia della pratica" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">docHistory</id>
+          <FieldType type="Products.Archetypes.Field.StringField">DOCLINK</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">CREATION</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[parentId = context.REQUEST.get('parentDocument','')
+result = []
+if not parentId:
+    return result
+idx = plominoDocument.getParentDatabase().getIndex()
+parent = plominoDocument.getParentDatabase().getDocument(parentId)
+
+searchPrm = dict(firstDocument=parent.getItem('firstDocument'))
+
+for i in idx.dbsearch(searchPrm,sortindex='data_autorizzazione',reverse=1,only_allowed=False):
+    doc = i.getObject()
+    result.append('/'.join(doc.doc_path()))
+return result]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">renderDocLinkWithForm-Accordion</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">renderDocLinkWithForm-Accordion</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <params>
+<param>
+<value><struct>
+<member>
+<name>dynamictableparam</name>
+<value><string>'bPaginate': true,
+'bLengthChange': true,
+'bFilter': true,
+'bSort': true,
+'bInfo': true,
+'bAutoWidth': false</string></value>
+</member>
+<member>
+<name>labelcolumn</name>
+<value><string>dsp_disabili_base</string></value>
+</member>
+</struct></value>
+</param>
+</params>
+          <CustomData>
+            <extensionfields ExportImportClass="Products.CMFPlomino.tests.schemaextender.importexport.ExtendedFieldImportExporter">
+              <field name="fieldDescription"/>
+              <field name="customAttributes"/>
+            </extensionfields>
+          </CustomData>
+        </element>
+        <element id="hw_nohistory" title="Nascondi la storia della pratica" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_nohistory</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if not context.isDocument() or context.isEditMode() or not context.wf_getInfoFor('wf_protocollata'):
+    return True
+else:
+    return False]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+      </elements>
+    </element>
+  </design>
+</plominodatabase>
