@@ -1,1 +1,0 @@
-<tal:cell tal:content="options/fieldvalue"></tal:cell>   
